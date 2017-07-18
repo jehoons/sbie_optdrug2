@@ -1,3 +1,4 @@
+#/usr/bin/bash 
 wget http://143.248.32.25/~jhsong/dataset/Compounds/ChEMBL/23/chembl_23_sqlite.tar.gz
 tar xvfz chembl_23_sqlite.tar.gz
 
