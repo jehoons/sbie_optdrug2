@@ -22,9 +22,13 @@
 
 #### (**C**) CCLE compound analysis 
 
+여기서 CCLE 데이터(약물, 도즈반응커브)를 활용함으로써 시뮬레이션 데이터를 검증하고자 한다. 그러면, explicit target information 과 implicit target information을 이용하는 것이 가능하다. 
+
 *1. Prepare treatment data (CCLE)*
 
 First, extract ccle drugs from ccle dataset, and then curate chembl_id from chembl database site. 
+
+*2. Infer implicit targets based on compound similarity* 
 
 
 

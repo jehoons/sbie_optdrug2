@@ -44,8 +44,8 @@ def test_b1(force, with_small):
      
     with open(table_s1.output_b2_drug_simil, 'wb') as fobj:
         pickle.dump(sim_mat, fobj)
-
-    pd.DataFrame(sim_mat).to_csv('output-similarity-matrix.csv')
+    
+    pd.DataFrame(sim_mat).to_csv(table_s1.output_b2_drug_simil_csv)
 
     df_unique.to_csv(table_s1.output_b3_drug_simil_labels)
 

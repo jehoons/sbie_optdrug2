@@ -41,6 +41,6 @@ def test_a(with_small, force):
     
     df_integrated.to_csv(table_s1.output_a1)
     
-    df_integrated.groupby('uniprot_id').count()[[]].to_csv(table_s1.output_a2_uniprot_list)
+    df_integrated.groupby('uniprot_id').count()[[]].to_csv(table_s1.output_a2)
     
-    df_integrated.groupby('chembl_id_x').count()[[]].to_csv(table_s1.output_a4_compound_list)
+    df_integrated.groupby('chembl_id_x').count()[[]].to_csv(table_s1.output_a3)
