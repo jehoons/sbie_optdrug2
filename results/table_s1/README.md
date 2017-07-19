@@ -24,7 +24,9 @@
 
 *1. extract ccle drugs*
 
-First, extract ccle drugs from ccle dataset, and then curate chembl_id from chembl database site.  
+First, extract ccle drugs from ccle dataset, and then curate chembl_id from chembl database site. 
+
+
 
 
 
