@@ -28,7 +28,6 @@
 
 First, extract ccle drugs from ccle dataset, and then curate chembl_id from chembl database site. 
 
-*2. Infer implicit targets based on compound similarity* 
+*2. Infer alternative targets based on compound similarity*
 
-
-
+We are using CCLE to validate network models. Thus, we need to infer alternative targets of CCLE compounds. 
