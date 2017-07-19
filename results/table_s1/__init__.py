@@ -26,7 +26,7 @@ output_a1 = join(basedir,
 output_a2_uniprot_list = join(basedir, 
     'output-a2-uniprot-names.csv')
 
-# uniprot.org 를 통해서 유전자이름으로 변환할 수가 있다. 
+# uniprot.org를 통해서 유전자 이름으로 변환할 수가 있다. 
 dataset_a3_names = join(basedir, 
     'dataset-a3-gene-names.csv')
 
@@ -48,8 +48,8 @@ output_b4 = join(basedir,
 output_c1 = join(basedir, 
     'output-c1-ccle-drug-target-pair.csv')
 
-# output_c1을 먼저 추출한 후에 chembl database에 접속하여 
-# manual 작업으로 완료하기 
+# output_c1을 먼저 추출한 후에 CHEMBL Database에 접속하여 
+# Manual 작업으로 완료하기 
 dataset_c1 = join(basedir, 
     'dataset-c1-ccle-drug-target-pair-updated.csv')
 

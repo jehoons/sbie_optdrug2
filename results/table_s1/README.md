@@ -2,31 +2,29 @@
 
 #### (**A**) Prepare dataset from ChEMBL
 
-*1. filt subset compounds with target information*
+*1. Filt subset compounds with target information*
 
-*2. extract uniprot names*
+*2. Extract uniprot names*
 
-*3. convert uniprot names into gene names by using uniprot.org*
+*3. Convert uniprot names into gene names by using uniprot.org*
 
-*4. prepare compound list*
+*4. Prepare compound list*
 
 #### (**B**) Calculate similarity 
 
-*1. collect drug information*
+*1. Collect drug information*
 
-*2. compute drug-drug similarity matrix*
+*2. Compute drug-drug similarity matrix*
 
-*3. labels for the similarity matrix*
+*3. Labels for the similarity matrix*
 
-*4. prepare compound-target dictionary*
+*4. Prepare compound-target dictionary*
 
 #### (**C**) CCLE compound analysis 
 
-*1. extract ccle drugs*
+*1. Prepare treatment data (CCLE)*
 
 First, extract ccle drugs from ccle dataset, and then curate chembl_id from chembl database site. 
-
-
 
 
 
