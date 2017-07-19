@@ -12,6 +12,9 @@ from tqdm import tqdm
 
 def test_b1(force, with_small):
     
+    if exists(table_s1.output_b2_drug_simil) and force==False:
+        return
+        
     ''' extract moles from sdf file '''
     df0 = pd.read_csv(table_s1.output_a1)    
 
@@ -53,6 +56,4 @@ def test_b1(force, with_small):
     comp_target_dict['compound_name'] = comp_target_dict2
 
     comp_target_dict[['compound_name','To']].to_csv(table_s1.output_b4)
-
-
 

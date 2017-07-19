@@ -1,6 +1,6 @@
 ### Table S1. Compound similarity analysis
 
-#### (A) Prepare dataset from ChEMBL
+#### (**A**) Prepare dataset from ChEMBL
 
 *1. filt subset compounds with target information*
 
@@ -10,7 +10,7 @@
 
 *4. prepare compound list*
 
-#### (B) Calculate similarity 
+#### (**B**) Calculate similarity 
 
 *1. collect drug information*
 
@@ -19,5 +19,12 @@
 *3. labels for the similarity matrix*
 
 *4. prepare compound-target dictionary*
+
+#### (**C**) CCLE compound analysis 
+
+*1. extract ccle drugs*
+
+First, extract ccle drugs from ccle dataset, and then curate chembl_id from chembl database site.  
+
 
 

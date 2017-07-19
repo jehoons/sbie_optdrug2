@@ -1,10 +1,7 @@
 download/
-tmp/
 .cache/
 __pycache__/
 *.pyc
 *.pyx
-dataset/material
-untracked*
 autogen.py
-private
+output-*
