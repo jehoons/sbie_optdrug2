@@ -19,13 +19,12 @@ def test_c1(force, with_small):
 
 def test_c2(force, with_small):
 
-    ''' filt based on similarity '''
+    ''' Discover alternative targets based on compound similarity '''
 
-    query_list = ['CHEMBL20', 'CHEMBL551064']
-
+    df = pd.read_csv(table_s1.updated_c1)    
+    query_list = df['compound_chembl_id'].unique().tolist()
     res = find_resemble_compounds(
-        query_list=query_list, min_similarity=0.2)
-    
+        query_list=query_list, min_similarity=0.2)    
     with open(table_s1.output_c2, 'w') as f: 
         json.dump(res, f, indent=4)
 
@@ -41,6 +40,10 @@ def find_resemble_compounds(query_list=[], min_similarity=0.5):
 
     output = {}
     for q0 in query_list: 
+        if q0 not in labels: 
+            print('query(%s) not found in the matrix' % q0)
+            continue 
+
         ix = labels.index(q0)        
         selected = data[ix, ] > min_similarity 
         neighbor = []        
@@ -51,9 +54,8 @@ def find_resemble_compounds(query_list=[], min_similarity=0.5):
 
         chembl_grp = dataint.groupby('chembl_id_x').groups
 
-        comp_counter = {} 
-        
-        neighbor_dict = {} 
+        comp_counter = {}        
+        neighbor_dict = {}
         
         for nei in neighbor:             
             jx = labels.index(nei)
@@ -75,3 +77,4 @@ def find_resemble_compounds(query_list=[], min_similarity=0.5):
     return output
 
     # to dataframe? 
+    
