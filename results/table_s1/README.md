@@ -2,9 +2,7 @@
 
 #### (**A**) Similarity analysis result
 
-We investigate alternative targets for CCLE drugs using structure similarity of drugs. 
-
-I used ChEMBL dataset and [CCLE drugs](https://github.com/jehoons/sbie_optdrug2/blob/master/results/table_s1/dataset-query-drugs.csv) for this analysis.
+We investigate alternative targets for CCLE drugs using structure similarity of drugs. To run the [program](https://github.com/jehoons/sbie_optdrug2/blob/master/results/table_s1/test_resembl.py), you need to prepare [input file](https://github.com/jehoons/sbie_optdrug2/blob/master/results/table_s1/dataset-query-drugs.csv) for this analysis.
 
 **Ref.**
 
