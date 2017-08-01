@@ -2,7 +2,9 @@
 
 #### (**A**) Similarity analysis result
 
-ccle 약물들에 대해서, 이들이 어떤 alternative target들을 가질 수 있는가를 약물의 구조 유사성을 이용하여 조사한다. 
+We investigate alternative targets for CCLE drugs using structure similarity of drugs. 
+
+I used ChEMBL dataset and [CCLE drugs](https://github.com/jehoons/sbie_optdrug2/blob/master/results/table_s1/dataset-query-drugs.csv) for this analysis.
 
 **Ref.**
 
