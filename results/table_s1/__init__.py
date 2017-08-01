@@ -27,8 +27,8 @@ output_a2 = join(basedir,
     'output-a2-uniprot-names.csv')
 
 # uniprot.org를 통해서 유전자 이름으로 변환할 수가 있다. 
-updated_a2 = join(basedir, 
-    'updated-a2-gene-names.csv')
+handwork_a2 = join(basedir, 
+    'handwork-a2-gene-names.csv')
 
 output_a3 = join(basedir, 
     'output-a3-compounds.csv')
@@ -51,8 +51,14 @@ output_b4 = join(basedir,
 output_c1 = join(basedir, 
     'output-c1-ccle-drug-target-pair.csv')
 
-updated_c1 = join(basedir, 
-    'updated-c1-ccle-drug-target-pair.csv')
+handwork_c1 = join(basedir, 
+    'handwork-c1-ccle-drug-target-pair.csv')
 
 output_c2 = join(basedir, 
     'output-c2-inferred-targets.json')
+
+output_c2_stats = join(basedir, 
+    'output-c2-inferred-targets-stats.csv')
+
+output_c3 = join(basedir, 
+    'output-c3')
