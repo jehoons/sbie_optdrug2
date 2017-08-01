@@ -1,33 +1,10 @@
 ### Table S1. Compound similarity analysis
 
-#### (**A**) Prepare dataset from ChEMBL
+#### (**A**) Similarity analysis result
 
-*1. Filt subset compounds with target information*
+ccle 약물들에 대해서, 이들이 어떤 alternative target들을 가질 수 있는가를 약물의 구조 유사성을 이용하여 조사한다. 
 
-*2. Extract uniprot names*
+**Ref.**
 
-*3. Convert uniprot names into gene names by using uniprot.org*
+Lo, Yu-Chen, Silvia Senese, Chien-Ming Li, Qiyang Hu, Yong Huang, Robert Damoiseaux, and Jorge Z. Torres. 2015. “Large-Scale Chemical Similarity Networks for Target Profiling of Compounds Identified in Cell-Based Chemical Screens.” PLOS Computational Biology 11 (3): e1004153. doi:10.1371/journal.pcbi.1004153.
 
-*4. Prepare compound list*
-
-#### (**B**) Calculate similarity 
-
-*1. Collect drug information*
-
-*2. Compute drug-drug similarity matrix*
-
-*3. Labels for the similarity matrix*
-
-*4. Prepare compound-target dictionary*
-
-#### (**C**) CCLE compound analysis 
-
-여기서 CCLE 데이터(약물, 도즈반응커브)를 활용함으로써 시뮬레이션 데이터를 검증하고자 한다. 그러면, explicit target information 과 implicit target information을 이용하는 것이 가능하다. 
-
-*1. Prepare treatment data (CCLE)*
-
-First, extract ccle drugs from ccle dataset, and then curate chembl_id from chembl database site. 
-
-*2. Infer alternative targets based on compound similarity*
-
-We are using CCLE to validate network models. Thus, we need to infer alternative targets of CCLE compounds. 
