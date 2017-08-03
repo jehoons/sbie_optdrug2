@@ -8,7 +8,7 @@ import pybel
 import pytest 
 import json
 from os.path import dirname,join,exists
-from sbie_optdrug2.results import table_s1 
+from sbie_optdrug2.results import table_s2 
 import sqlite3 
 import pickle
 import numpy as np 
@@ -23,7 +23,7 @@ def test_step_1(with_small, force):
         print(chk_integ_dataset)
         return
 
-    conn = sqlite3.connect(dataset_chembl_db)
+    conn = sqlite3.connect(table_s2.dataset_chembl_db)
     cur = conn.cursor()
 
     sql1 = """SELECT 
@@ -50,10 +50,10 @@ def test_step_1(with_small, force):
         sql1 += ' LIMIT 100'
 
     allWithTarget = pd.read_sql_query(sql1, conn)    
-    ccleComp = pd.read_csv(dataset_drugtarget_info)
+    ccleComp = pd.read_csv(table_s2.dataset_drugtarget_info)
 
     set1 = set(allWithTarget['compound_chembl_id'].unique())
-    set2 = set(pd.read_csv(dataset_drugtarget_info)['compound_chembl_id'].unique())
+    set2 = set(pd.read_csv(table_s2.dataset_drugtarget_info)['compound_chembl_id'].unique())
 
     sql2 = """SELECT DISTINCT
         MOLECULE_DICTIONARY.CHEMBL_ID 
@@ -159,9 +159,9 @@ def test_step_3(with_small, force):
     
     ''' discover alternative targets ''' 
 
-    if exists(output_search_res) and force==False:
+    if exists(table_s2.output_a_search_res) and force==False:
         print('output already exists:')
-        print(output_search_res)
+        print(table_s2.output_a_search_res)
         return
 
     search_res = {} 
@@ -169,7 +169,7 @@ def test_step_3(with_small, force):
         keystr = 'similarity>=%.02f' % similarity_thr
         search_res[keystr] = resembl_worker(similarity_thr)
 
-    with open(output_search_res, 'w') as fobj: 
+    with open(table_s2.output_a_search_res, 'w') as fobj: 
         json.dump(search_res, fobj, indent=4)
 
 
@@ -238,20 +238,20 @@ def resembl_worker(similarity_thr):
 
 
 def test_step_4(with_small, force):
-
+    
     ''' postprocess ''' 
 
-    with open(output_search_res, encoding='utf-8') as f: 
+    with open(table_s2.output_a_search_res, encoding='utf-8') as f: 
         search_res = json.loads(f.read())
 
     mykey = 'similarity>=0.35'
-    
+
     res = search_res[mykey]
 
-    dforig = pd.read_csv(dataset_drugtarget_info)
+    dforig = pd.read_csv(table_s2.dataset_drugtarget_info)
     ccle = dforig['target_chembl_id'].unique().tolist()
 
-    df0 = pd.read_csv(dataset_model_node_info)    
+    df0 = pd.read_csv(table_s2.dataset_model_node_info)    
     fumia_nodes = df0['chembl_id'].dropna().unique().tolist()
     
     targets = []
@@ -265,7 +265,6 @@ def test_step_4(with_small, force):
 
     dforig['targetable'] = 0 
     for i in dforig.index: 
-        # print (i)
         if dforig.loc[i, 'target_chembl_id'] in set_fumia_nodes:
             dforig.loc[i, 'targetable'] = 1
 
@@ -278,10 +277,9 @@ def test_step_4(with_small, force):
             ]
         )
 
-    i = 0 
+    i = 0
     for compound_chembl_id in res: 
         for target_chembl_id in res[compound_chembl_id]['connectivity_w']: 
-            # print(target_chembl_id)
             df_ccle_extended.loc[i, 'compound_chembl_id'] = compound_chembl_id
             df_ccle_extended.loc[i, 'target_chembl_id'] = target_chembl_id
             df_ccle_extended.loc[i, 'connectivity_w'] = \
@@ -306,21 +304,18 @@ def test_step_4(with_small, force):
     df_ccle_extended.groupby('compound_chembl_id').agg(
             fcn_set).to_csv(chk_drug_coverage_ext)
 
-    # xxx
 
+chk_integ_dataset = join(table_s2.basedir, 'chk-integ-dataset.csv')
 
-# datafiles for check 
-chk_integ_dataset = join(table_s1.basedir, 'chk-integ-dataset.csv')
+chk_similarity_mat = join(table_s2.basedir, 'chk-similarity-mat.pkl')
 
-chk_similarity_mat = join(table_s1.basedir, 'chk-similarity-mat.pkl')
+chk_similarity_mat_label = join(table_s2.basedir, 'chk-similarity-mat-label.csv')
 
-chk_similarity_mat_label = join(table_s1.basedir, 'chk-similarity-mat-label.csv')
+# coverage for original information
+chk_drug_coverage = join(table_s2.basedir, 'chk-drug-coverage.csv')
 
-# 원본 약물에 대한 커버리지 
-chk_drug_coverage = join(table_s1.basedir, 'chk-drug-coverage.csv')
-
-# 확장 약물에 대한 커버리지 
-chk_drug_coverage_ext = join(table_s1.basedir, 'chk-drug-coverage-ext.csv')
+# coverage for extended information
+chk_drug_coverage_ext = join(table_s2.basedir, 'chk-drug-coverage-ext.csv')
 
 # min_similarity = 0.45
 similarity_list = [0.30,0.35,0.5,1.0]
