@@ -15,29 +15,14 @@ import numpy as np
 from tqdm import tqdm
 from multiprocessing import Pool
 
-# sql = """SELECT 
-#     MOLECULE_DICTIONARY.CHEMBL_ID,
-#     compound_records.RECORD_ID,  
-#     compound_records.MOLREGNO,  
-#     compound_records.COMPOUND_KEY,  
-#     compound_records.COMPOUND_NAME, 
-#     drug_mechanism.TID, 
-#     COMPOUND_STRUCTURES.CANONICAL_SMILES,
-#     -- COMPOUND_STRUCTURES.MOLFILE,
-#     target_dictionary.pref_name as t_name, 
-#     target_dictionary.chembl_id as t_chembl_id 
-#     FROM compound_records 
-#     INNER JOIN drug_mechanism on compound_records.RECORD_ID = drug_mechanism.RECORD_ID 
-#     LEFT JOIN target_dictionary on target_dictionary.TID = drug_mechanism.TID 
-#     LEFT JOIN MOLECULE_DICTIONARY on compound_records.MOLREGNO = MOLECULE_DICTIONARY.MOLREGNO 
-#     LEFT JOIN COMPOUND_STRUCTURES on COMPOUND_STRUCTURES.MOLREGNO = MOLECULE_DICTIONARY.MOLREGNO 
-# """
 
 def test_step_1(with_small, force):
     
     if exists(chk_integ_dataset) and force==False:
+        print('output already exists:')
+        print(chk_integ_dataset)
         return
-        
+
     conn = sqlite3.connect(dataset_chembl_db)
     cur = conn.cursor()
 
@@ -45,8 +30,12 @@ def test_step_1(with_small, force):
         MOLECULE_DICTIONARY.CHEMBL_ID 
             as compound_chembl_id,
         COMPOUND_STRUCTURES.CANONICAL_SMILES,
+        compound_records.COMPOUND_KEY, 
+        compound_records.COMPOUND_NAME,
         target_dictionary.chembl_id
-            as target_chembl_id 
+            as target_chembl_id, 
+        target_dictionary.pref_name
+            as target_name
         FROM compound_records 
         INNER JOIN drug_mechanism 
             on compound_records.RECORD_ID = drug_mechanism.RECORD_ID 
@@ -58,7 +47,7 @@ def test_step_1(with_small, force):
             on COMPOUND_STRUCTURES.MOLREGNO = MOLECULE_DICTIONARY.MOLREGNO"""
 
     if with_small: 
-        sql1 += ' LIMIT 10'
+        sql1 += ' LIMIT 100'
 
     allWithTarget = pd.read_sql_query(sql1, conn)    
     ccleComp = pd.read_csv(dataset_drugtarget_info)
@@ -83,7 +72,13 @@ def test_step_1(with_small, force):
     df3 = pd.concat([allWithTarget, df2], ignore_index=True)
     df3['source'] = 'CHEMBL'
 
-    df4 = ccleComp[['compound_chembl_id', 'target_chembl_id']]
+    df4 = ccleComp[[
+        'compound_name',
+        'compound_chembl_id',
+        'target_name',
+        'target_chembl_id']
+        ]
+
     df4['source'] = 'USER'
     df5 = pd.concat([df3, df4], ignore_index=True)
     df5['canonical_smiles'] = df5['canonical_smiles'].fillna('')
@@ -100,6 +95,8 @@ def test_step_1(with_small, force):
 def test_step_2(with_small, force):
     
     if exists(chk_similarity_mat) and force==False:
+        print('output already exists:')
+        print(chk_similarity_mat)
         return 
 
     dfIntegDB = pd.read_csv(chk_integ_dataset)
@@ -113,17 +110,19 @@ def test_step_2(with_small, force):
 
         idSmiMap[g] = smiles; chembl_ids.append(g)
 
-    inputs = []
 
+    print('Prepare input data for similarity matrix ...')
+    inputs = []
     sim_mat = np.zeros([len(chembl_ids), len(chembl_ids)])
-    for i,s1 in enumerate(tqdm(chembl_ids)):
+    for i,s1 in enumerate(tqdm(chembl_ids)): 
+        # progressbar
         for j,s2 in enumerate(chembl_ids):            
             inputs.append([i,j,idSmiMap[s1],idSmiMap[s2]])
 
     ''' Now, we run parallel processing with multiprocessing ''' 
     
+    print('Compute similarity matrix ...')
     pool = Pool(n_cpus); results = []
-
     for x in tqdm(pool.imap(simmat_worker, inputs), total=len(inputs)):
         results.append(x)
 
@@ -138,28 +137,46 @@ def test_step_2(with_small, force):
 
 def simmat_worker(inp):
         
-        i = inp[0]
-        j = inp[1]
-        s1= inp[2]
-        s2= inp[3]
+    ''' calculate similarity matrix '''
 
-        if i == j: 
-            return 1.0
-        else:
-            if (s1 == None) or (s2 == None) :
-                return 0.0
-            else: 
-                m1 = pybel.readstring("smiles", s1)
-                m2 = pybel.readstring("smiles", s2)
-                return m1.calcfp() | m2.calcfp()
+    i = inp[0]
+    j = inp[1]
+    s1= inp[2]
+    s2= inp[3]
+
+    if i == j: 
+        return 1.0
+    else:
+        if (s1 == None) or (s2 == None) :
+            return 0.0
+        else: 
+            m1 = pybel.readstring("smiles", s1)
+            m2 = pybel.readstring("smiles", s2)
+            return m1.calcfp() | m2.calcfp()
 
 
 def test_step_3(with_small, force):                
+    
+    ''' discover alternative targets ''' 
 
     if exists(output_search_res) and force==False:
+        print('output already exists:')
+        print(output_search_res)
         return
 
-    labels = pd.read_csv(chk_similarity_mat_label)['compound_chembl_id'].tolist()
+    search_res = {} 
+    for similarity_thr in similarity_list:        
+        keystr = 'similarity>=%.02f' % similarity_thr
+        search_res[keystr] = resembl_worker(similarity_thr)
+
+    with open(output_search_res, 'w') as fobj: 
+        json.dump(search_res, fobj, indent=4)
+
+
+def resembl_worker(similarity_thr):
+
+    labels = pd.read_csv(
+        chk_similarity_mat_label)['compound_chembl_id'].tolist()
     user_drugset = pd.read_csv(dataset_drugtarget_info) 
     query_list = user_drugset['compound_chembl_id'].unique().tolist()    
     int_db = pd.read_csv(chk_integ_dataset)
@@ -167,48 +184,129 @@ def test_step_3(with_small, force):
     with open(chk_similarity_mat, 'rb') as fobj:
         simmat = pickle.load(fobj)
 
+    f0 = {'compound_name': lambda x: x.unique()[0] \
+        if len(x.unique())==1 else 'multiple value error'}
+
+    chemblid_name_map = user_drugset.groupby(
+        'compound_chembl_id').agg(f0).to_dict()['compound_name']
+
     search_res = {} 
-    for q0 in tqdm(query_list): 
+    for q0 in tqdm(query_list): # for each query compound 
+        # 1. check similar compound
         ix = labels.index(q0)
-        selected = simmat[ix, ] > min_similarity 
+        selected = simmat[ix, ] >= similarity_thr 
         neighbor = []        
         neighbor_score = {} 
-
         for i,sel in enumerate(selected):
             if sel: 
                 neighbor.append( labels[i] )
 
-        neighbor_info = {}
+        # 2. check targets of neighbor(similar compound)
+        neighbor_info = {}; 
+        connectivity = {}; 
+        connectivity_w = {}
         for nei in neighbor:
-            subset_idx = (int_db['compound_chembl_id'] == nei) & (
-                    ~int_db['target_chembl_id'].isnull())
-
-            subset = int_db[subset_idx]
-
-            target_info = subset[['target_chembl_id','source']].to_dict(
-                        orient='records')
-
+            target_neighbor_similarity = simmat[ix, labels.index(nei)]
+            subset_idx = (int_db['compound_chembl_id'] == nei) & \
+                (~int_db['target_chembl_id'].isnull())
+            target_info = int_db[subset_idx][
+                ['target_name','target_chembl_id','source']].to_dict(orient='records')
             neighbor_info[nei] = {
-                'similarity': simmat[ix, labels.index(nei)], 
-                'target': target_info
+                'similarity': target_neighbor_similarity, 
+                'target_info': target_info
                 }
+            for tar in target_info:
+                chemblid = tar['target_chembl_id']
+                if chemblid not in connectivity:
+                    connectivity[chemblid] = 1
+                else: 
+                    connectivity[chemblid] +=1
 
-        connectivity = {} 
-        for tar in target_info:
-            chemblid = tar['target_chembl_id']
-            if chemblid not in connectivity:
-                connectivity[chemblid] = 1 
-            else: 
-                connectivity[chemblid] +=1 
+                if chemblid not in connectivity_w:
+                    connectivity_w[chemblid] = target_neighbor_similarity
+                else: 
+                    connectivity_w[chemblid] +=target_neighbor_similarity
 
         search_res[q0] = {
                 'neighbor_info': neighbor_info, 
-                'target_info': target_info, 
-                'connectivity': connectivity
+                'connectivity': connectivity, 
+                'connectivity_w': connectivity_w,
+                'compound_name': chemblid_name_map[q0]
                 }
-        
-    with open(output_search_res, 'w') as fobj: 
-        json.dump(search_res, fobj, indent=1)
+                
+    return search_res
+
+
+def test_step_4(with_small, force):
+
+    ''' postprocess ''' 
+
+    with open(output_search_res, encoding='utf-8') as f: 
+        search_res = json.loads(f.read())
+
+    mykey = 'similarity>=0.35'
+    
+    res = search_res[mykey]
+
+    dforig = pd.read_csv(dataset_drugtarget_info)
+    ccle = dforig['target_chembl_id'].unique().tolist()
+
+    df0 = pd.read_csv(dataset_model_node_info)    
+    fumia_nodes = df0['chembl_id'].dropna().unique().tolist()
+    
+    targets = []
+    for comp in res: 
+        for tar in res[comp]['connectivity_w']:
+            tar_score = res[comp]['connectivity_w'][tar]
+            if tar_score >= 0.01:
+                targets.append(tar)
+
+    set_fumia_nodes = set(fumia_nodes)
+
+    dforig['targetable'] = 0 
+    for i in dforig.index: 
+        # print (i)
+        if dforig.loc[i, 'target_chembl_id'] in set_fumia_nodes:
+            dforig.loc[i, 'targetable'] = 1
+
+    df_ccle_extended = pd.DataFrame([], 
+        columns=[
+            'compound_chembl_id',
+            'target_chembl_id',
+            'connectivity_w',
+            'targetable'
+            ]
+        )
+
+    i = 0 
+    for compound_chembl_id in res: 
+        for target_chembl_id in res[compound_chembl_id]['connectivity_w']: 
+            # print(target_chembl_id)
+            df_ccle_extended.loc[i, 'compound_chembl_id'] = compound_chembl_id
+            df_ccle_extended.loc[i, 'target_chembl_id'] = target_chembl_id
+            df_ccle_extended.loc[i, 'connectivity_w'] = \
+                res[compound_chembl_id]['connectivity_w'][target_chembl_id]
+            if df_ccle_extended.loc[i, 'target_chembl_id'] in set_fumia_nodes:
+                df_ccle_extended.loc[i, 'targetable'] = 1
+            else: 
+                df_ccle_extended.loc[i, 'targetable'] = 0
+
+            i += 1
+
+    fcn_set = {
+        'targetable': {
+            'count': 'count',
+            'coverage%': lambda g: g.sum()/g.count()*100.0
+            }
+        }
+    
+    dforig.groupby('compound_chembl_id').agg(
+            fcn_set).to_csv(chk_drug_coverage)
+    
+    df_ccle_extended.groupby('compound_chembl_id').agg(
+            fcn_set).to_csv(chk_drug_coverage_ext)
+
+    # xxx
 
 
 basedir = dirname(__file__)
@@ -216,11 +314,14 @@ basedir = dirname(__file__)
 # background dataset 
 dataset_chembl_db = table_s1.dataset_chembl_db
 
-# dataset for input 
+# input query drugs
 dataset_drugtarget_info = join(basedir, 
         'dataset-query-drugs.csv')
 
-# dataset for output 
+# input model node information
+dataset_model_node_info = join(basedir, 
+    'fumia-node-info-update-2.csv')
+
 output_search_res = join(basedir, 
         'output-a-alternative-targets.json')
 
@@ -234,7 +335,17 @@ chk_similarity_mat = join(basedir,
 chk_similarity_mat_label = join(basedir, 
         'chk-similarity-mat-label.csv')
 
-min_similarity = 0.3
+# 원본 약물에 대한 커버리지 
+chk_drug_coverage = join(basedir, 
+        'chk-drug-coverage.csv')
+
+# 확장 약물에 대한 커버리지 
+chk_drug_coverage_ext = join(basedir,
+        'chk-drug-coverage-ext.csv')
+
+# min_similarity = 0.45
+similarity_list = [0.30,0.35,0.5,1.0]
 
 n_cpus = 100
+
 

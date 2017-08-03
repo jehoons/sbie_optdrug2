@@ -1,0 +1,109 @@
+variable,chembl_id,uniprot_id,name,variable_type,function
+State_Mutagen,NA,NA,NA,input,NA
+State_GFs,NA,NA,NA,input,NA
+State_Nutrients,NA,NA,NA,input,NA
+State_TNFalpha,NA,NA,NA,input,NA
+State_Hypoxia,NA,NA,NA,input,NA
+State_Gli,NA,NA,NA,input,NA
+State_TGFbeta,CHEMBL1795178,P01137,Transforming growth factor beta-1,state_variable,tumor-suppressor
+State_DnaDamage,NA,NA,DNA damage,state_variable,NA
+State_p53_Mdm2,NA,NA,NA,state_variable,NA
+State_AMP_ATP,NA,NA,NA,state_variable,NA
+State_NF1,CHEMBL2176807,Q04690,Neurofibromin,state_variable,tumor-suppressor
+State_PKC,CHEMBL2093867,"O94806, P05129, P05771, P17252, P24723, P41743, Q02156, Q04759, Q05513, Q05655, Q15139",Protein kinase C (PKC),state_variable,oncogene
+State_RTK,CHEMBL1913,P09619,Platelet-derived growth factor receptor beta,state_variable,oncogene
+State_RTK,CHEMBL2007,P16234,Platelet-derived growth factor receptor alpha,state_variable,oncogene
+State_RTK,CHEMBL2041,P07949,Proto-oncogene tyrosine-protein kinase receptor Ret,state_variable,oncogene
+State_RTK,CHEMBL1906,P04049,RAF proto-oncogene serine/threonine-protein kinase,state_variable,oncogene
+State_RTK,CHEMBL1974,P36888,Receptor-type tyrosine-protein kinase FLT3,state_variable,oncogene
+State_RAGS,NA,NA,NA,state_variable,NA
+State_Ras,CHEMBL2189121,P01116,KARS,state_variable,oncogene
+State_Ras,CHEMBL2167,P01112,HRAS,state_variable,oncogene
+State_Ras,CHEMBL2079845,P01111,NRAS,state_variable,oncogene
+State_PI3K,CHEMBL4005,P42336,PI3-kinase p110-alpha subunit ,state_variable,oncogene
+State_PTEN,CHEMBL2052032,P60484,"Phosphatidylinositol 3,4,5-trisphosphate 3-phosphatase and dual-specificity protein phosphatase PTEN",state_variable,tumor-suppressor
+State_PIP3,NA,NA,NA,state_variable,
+State_PDK1,CHEMBL4766,Q15118,"[Pyruvate dehydrogenase (acetyl-transferring)] kinase isozyme 1, mitochondrial",state_variable,
+State_IKK,CHEMBL2111328,O14920;O15111;Q9Y6K9,Inhibitor of nuclear factor kappa-B kinase subunit,state_variable,
+State_NFkappaB,CHEMBL2094258,P19838;Q00653;Q04206,Nuclear factor NF-kappa-B complex,state_variable,
+State_RAF,CHEMBL1906,P04049,Serine/threonine-protein kinase RAF,state_variable,
+State_ERK,CHEMBL3587,Q02750,Dual specificity mitogen-activated protein kinase kinase 1,state_variable,
+State_p90,NA,G8IFA7,p90,state_variable,
+State_AKT,CHEMBL4282,P31749,Serine/threonine-protein kinase AKT,state_variable,
+State_WNT,CHEMBL1255137 ,P56704,Protein Wnt-3a,state_variable,
+State_Dsh,NA,O14640,Segment polarity protein dishevelled homolog DVL-1,state_variable,
+State_APC,NA,P25054,Adenomatous polyposis coli protein,state_variable,
+State_GSK_3,CHEMBL262,P49841,Glycogen synthase kinase-3 beta ,state_variable,
+State_GSK_3_APC,NA,NA,NA,state_variable,
+State_beta_cat,CHEMBL5866,P35222,Catenin beta-1,state_variable,
+State_Slug,NA,O00514,Slug,state_variable,
+State_mTOR,CHEMBL2842,P42345,Serine/threonine-protein kinase mTOR,state_variable,
+State_HIF1,CHEMBL4261,Q16665,Hypoxia-inducible factor 1 alpha ,state_variable,
+State_COX412,NA,Q96KJ9,"Cytochrome c oxidase subunit 4 isoform 2, mitochondrial",state_variable,
+State_VHL,NA,NA,NA,state_variable,
+State_PHDs,NA,NA,NA,state_variable,
+State_Myc_Max,NA,NA,NA,state_variable,
+State_Myc,CHEMBL1250348,P01106,Myc proto-oncogene protein ,state_variable,
+State_Max,NA,NA,NA,state_variable,
+State_MXI1,NA,NA,NA,state_variable,
+State_TSC1_TSC2,NA,NA,NA,state_variable,
+State_RHEB,CHEMBL3108656,Q15382,GTP-binding protein Rheb ,state_variable,
+State_p53,CHEMBL4096,P04637,Cellular tumor antigen p53 ,state_variable,
+State_Bcl_2,CHEMBL4860,P10415,Apoptosis regulator Bcl-2 ,state_variable,
+State_BAX,CHEMBL5318,Q07812,Apoptosis regulator BAX ,state_variable,
+State_BAD,CHEMBL3817,Q92934,Bcl2-antagonist of cell death (BAD) ,state_variable,
+State_Bcl_XL,NA,NA,NA,state_variable,
+State_Rb,NA,P06400,Retinoblastoma-associated protein,state_variable,
+State_E2F,NA,Q01094,Transcription factor E2F1,state_variable,
+State_p14,NA,Q8N726 ,Tumor suppressor ARF,state_variable,
+State_CycA,CHEMBL2094128,P20248;P24941;P78396,Cyclin-dependent kinase 2/cyclin A ,state_variable,
+State_CycB,CHEMBL2094127,O95067;P06493;P14635;Q8WWL7,Cyclin-dependent kinase 1/cyclin B ,state_variable,
+State_CycD,CHEMBL1907601,P11802;P24385,Cyclin-dependent kinase 4/cyclin D1 ,state_variable,
+State_CycE,CHEMBL3617,P24864,G1/S-specific cyclin E1 ,state_variable,
+State_cdh1,CHEMBL2321609,P12830,Cadherin-1 ,state_variable,
+State_cdc20,NA,Q12834,Cell division cycle protein 20 homolog,state_variable,
+State_UbcH10,NA,O00762,Ubiquitin-conjugating enzyme E2 C,state_variable,
+State_p27,NA,P46527,Cyclin-dependent kinase inhibitor 1B,state_variable,
+State_p21,CHEMBL5021,P38936,Cyclin-dependent kinase inhibitor 1,state_variable,
+State_Mdm2,CHEMBL5023,Q00987,E3 ubiquitin-protein ligase Mdm2,state_variable,
+State_Smad,NA,Q15797,Mothers against decapentaplegic homolog 1,state_variable,
+State_SmadMiz_1,NA,NA,NA,state_variable,
+State_SmadE2F,NA,NA,NA,state_variable,
+State_p15,NA,Q9UM95,p15 protein,state_variable,
+State_FADD,NA,Q13158,FAS-associated death domain protein,state_variable,
+State_Caspase8,CHEMBL3776,Q14790,Caspase-8,state_variable,
+State_Bak,CHEMBL3137283,Q07817;Q16611,Bcl-xL/BAK ,state_variable,
+State_JNK,CHEMBL2096667,P45983,"c-Jun N-terminal kinase, JNK",state_variable,
+State_JNK,CHEMBL2096667,P45984,"c-Jun N-terminal kinase, JNK",state_variable,
+State_JNK,CHEMBL2096667,P53779,"c-Jun N-terminal kinase, JNK",state_variable,
+State_FOXO,CHEMBL5294,Q12778,Forkhead box protein O1,state_variable,
+State_FOXO,CHEMBL5778,O43524,Forkhead box protein O3,state_variable,
+State_FosJun,NA,NA,NA,state_variable,
+State_ROS,NA,NA,NA,state_variable,
+State_AMPK,CHEMBL2096907,O43741;P54619;P54646;Q13131;Q9UGI9;Q9UGJ0;Q9Y478,,state_variable,
+State_Cytoc_APAF1,CHEMBL1795093,O14727,Apoptotic protease-activating factor 1,state_variable,
+State_Caspase9,CHEMBL2273,P55211,Caspase-9,state_variable,
+State_Apoptosis,NA,NA,NA,state_variable,
+State_E_cadh,CHEMBL2321609,P12830,Cadherin-1 ,state_variable,
+State_Glut_1,NA,Q8IRI6,Glucose transporter type 1,state_variable,
+State_hTERT,NA,O94807,hTERT,state_variable,
+State_VEGF,CHEMBL1783,P15692,VEGF,state_variable,
+State_VEGF,CHEMBL3714157,P49767,VEGF,state_variable,
+State_VEGF,NA,O43915,VEGF,state_variable,
+State_E2F_CyclinE,NA,NA,NA,state_variable,
+State_cdh1_UbcH10,NA,NA,NA,state_variable,
+State_TAK1,CHEMBL3038499,O43318;Q15750,TAK1/TAB1 ,state_variable,
+State_GSH,NA,NA,NA,state_variable,
+State_TCF,CHEMBL3038511,P35222;Q9NQB0,TCF4/beta-catenin ,state_variable,
+State_TCF,CHEMBL3217392,Q9UJU2,Lymphoid enhancer-binding factor 1,state_variable,
+State_Miz_1,NA,O22227,Protein MIZU-KUSSEI 1,state_variable,
+State_p70,NA,Q9NZF7,p70 killer cell inhibitory receptor,state_variable,
+State_ATM_ATR,NA,NA,NA,state_variable,
+State_CHK1_2,CHEMBL4630,O14757,Serine/threonine-protein kinase Chk1,state_variable,
+State_DNARepair,NA,NA,NA,state_variable,
+State_eEF2K,CHEMBL5026,O00418,Eukaryotic elongation factor 2 kinase,state_variable,
+State_eEF2,CHEMBL1795108,P13639,Elongation factor 2,state_variable,
+State_p53_PTEN,NA,NA,NA,state_variable,
+State_LDHA,CHEMBL4835,P00338,L-lactate dehydrogenase A chain,state_variable,
+State_AcidLactic,NA,NA,NA,state_variable,
+State_Snail,NA,O95863,Zinc finger protein SNAI1,state_variable,
