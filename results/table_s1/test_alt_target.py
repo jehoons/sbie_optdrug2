@@ -320,7 +320,7 @@ dataset_drugtarget_info = join(basedir,
 
 # input model node information
 dataset_model_node_info = join(basedir, 
-    'fumia-node-info-update-2.csv')
+    'dataset-fumia-node-info-update-2.csv')
 
 output_search_res = join(basedir, 
         'output-a-alternative-targets.json')
