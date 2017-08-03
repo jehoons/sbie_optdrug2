@@ -5,3 +5,4 @@ __pycache__/
 *.pyx
 autogen.py
 output-*
+chk-*
