@@ -3,62 +3,28 @@ import urllib
 from urllib import request 
 import gzip, shutil
 
-
 basedir = dirname(__file__)
 
-# dataset
-dataset_chembl_db = join(basedir, 
+dataset_chembl_db = join(table_s1.basedir, 
     'download/chembl_23/chembl_23_sqlite/chembl_23.db')
 
-dataset_chembl_sdf = join(basedir, 
+dataset_chembl_sdf = join(table_s1.basedir,
     'download/chembl_23.sdf')
 
-dataset_chembl_uniprot = join(basedir,
+dataset_chembl_uniprot = join(table_s1.basedir,
     'download/chembl_uniprot_mapping.txt')
 
-dataset_ccle_treatment = join(basedir,
+dataset_ccle_treatment = join(table_s1.basedir,
     'download/CCLE_NP24.2009_Drug_data_2015.02.24.csv')
 
-# output files
-output_a1 = join(basedir, 
-    'output-a1-filt-1st-with-target-info.csv')
+# input query drugs
+dataset_drugtarget_info = join(basedir, 
+    'dataset-query-drugs.csv')
 
-output_a2 = join(basedir, 
-    'output-a2-uniprot-names.csv')
+# input model node information
+dataset_model_node_info = join(basedir, 
+    'dataset-fumia-node-info-update-2.csv')
 
-# uniprot.org를 통해서 유전자 이름으로 변환할 수가 있다. 
-handwork_a2 = join(basedir, 
-    'handwork-a2-gene-names.csv')
+output_search_res = join(basedir, 
+    'output-a-alternative-targets.json')
 
-output_a3 = join(basedir, 
-    'output-a3-compounds.csv')
-
-output_b1_data_integration = join(basedir, 
-    'output-b1-data-integration.csv')
-
-output_b2_drug_simil = join(basedir, 
-    'output-b2-drug-similarity.pkl')
-
-output_b2_drug_simil_csv = join(basedir, 
-    'output-b2-drug-similarity.csv')
-
-output_b3_drug_simil_labels = join(basedir, 
-    'output-b3-drug-simil-labels.csv')
-
-output_b4 = join(basedir, 
-    'output-b4-comp-target-dict.csv')
-
-output_c1 = join(basedir, 
-    'output-c1-ccle-drug-target-pair.csv')
-
-handwork_c1 = join(basedir, 
-    'handwork-c1-ccle-drug-target-pair.csv')
-
-output_c2 = join(basedir, 
-    'output-c2-inferred-targets.json')
-
-output_c2_stats = join(basedir, 
-    'output-c2-inferred-targets-stats.csv')
-
-output_c3 = join(basedir, 
-    'output-c3')

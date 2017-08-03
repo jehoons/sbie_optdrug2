@@ -309,43 +309,21 @@ def test_step_4(with_small, force):
     # xxx
 
 
-basedir = dirname(__file__)
-
-# background dataset 
-dataset_chembl_db = table_s1.dataset_chembl_db
-
-# input query drugs
-dataset_drugtarget_info = join(basedir, 
-        'dataset-query-drugs.csv')
-
-# input model node information
-dataset_model_node_info = join(basedir, 
-    'dataset-fumia-node-info-update-2.csv')
-
-output_search_res = join(basedir, 
-        'output-a-alternative-targets.json')
-
 # datafiles for check 
-chk_integ_dataset = join(basedir, 
-        'chk-integ-dataset.csv')
+chk_integ_dataset = join(table_s1.basedir, 'chk-integ-dataset.csv')
 
-chk_similarity_mat = join(basedir, 
-        'chk-similarity-mat.pkl')
+chk_similarity_mat = join(table_s1.basedir, 'chk-similarity-mat.pkl')
 
-chk_similarity_mat_label = join(basedir, 
-        'chk-similarity-mat-label.csv')
+chk_similarity_mat_label = join(table_s1.basedir, 'chk-similarity-mat-label.csv')
 
 # 원본 약물에 대한 커버리지 
-chk_drug_coverage = join(basedir, 
-        'chk-drug-coverage.csv')
+chk_drug_coverage = join(table_s1.basedir, 'chk-drug-coverage.csv')
 
 # 확장 약물에 대한 커버리지 
-chk_drug_coverage_ext = join(basedir,
-        'chk-drug-coverage-ext.csv')
+chk_drug_coverage_ext = join(table_s1.basedir, 'chk-drug-coverage-ext.csv')
 
 # min_similarity = 0.45
 similarity_list = [0.30,0.35,0.5,1.0]
 
 n_cpus = 100
-
 
