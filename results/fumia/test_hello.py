@@ -35,7 +35,7 @@ def preproc_model_file(datast_fumia):
     modeltext = "\n".join(lines2)
     return modeltext
 
-
+    
 def test_hello(with_small, force):
 
     if not exists('fumia_engine.pyx'):
@@ -54,7 +54,6 @@ def test_hello(with_small, force):
 
     with open(output_attr, 'w') as f: 
         json.dump(res, f, indent=4)
-
 
 datast_fumia = 'dataset-fumia-model.txt'
 output_attr = 'output-a-attractors.json'

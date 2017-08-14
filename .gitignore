@@ -4,5 +4,6 @@ __pycache__/
 *.pyc
 *.pyx
 autogen.py
-output-*
+output*
 chk-*
+*.png

@@ -1,4 +1,4 @@
-### Table S1. Compound similarity analysis
+### Table S2. Compound similarity analysis
 
 #### (**A**) Similarity analysis result
 

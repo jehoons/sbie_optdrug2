@@ -84,8 +84,3 @@ Use `get_mutations_config_all()`
 
 *C4. Summary for C3*
 
-
-
-
-
-

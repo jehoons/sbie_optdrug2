@@ -2,6 +2,7 @@ from os.path import dirname,exists,join
 import urllib
 from urllib import request 
 import gzip, shutil
+from sbie_optdrug2.results import fumia
 
 basedir = dirname(__file__)
 
@@ -22,7 +23,7 @@ dataset_drugtarget_info = join(basedir,
     'dataset-query-drugs.csv')
 
 # input model node information
-dataset_model_node_info = join(basedir, 
+dataset_model_node_info = join(dirname(fumia.__file__), 
     'dataset-fumia-node-info-update-2.csv')
 
 output_a_search_res = join(basedir, 
