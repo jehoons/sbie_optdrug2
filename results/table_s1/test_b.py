@@ -8,73 +8,13 @@ from os.path import exists,dirname
 import pandas as pd
 from tqdm import tqdm 
 
-from sbie_optdrug.result_season2 import tab_s1
-from sbie_optdrug.result_season2.tab_s1 import fumia_phenotype
+from sbie_optdrug2.results import table_s1
+from sbie_optdrug2.results.table_s1 import fumia_phenotype
 from fumia_phenotype import *
 
-# @pytest.mark.skip(reason='')
-# def test_1():
-#     import engine 
-#     results = []    
-#     input_string = '00000'
-#     for i,s in enumerate(['State_Mutagen', 'State_GFs','State_Nutrients',
-#                             'State_TNFalpha','State_Hypoxia']):    
-#         template[s] = True if input_string[i] == '1' else False
-
-#     inputs = [ template ]
-
-#     for sim_input in inputs:
-#         on_states = [] 
-#         off_states = [] 
-#         for lbl in sim_input:
-#             if sim_input[lbl] == True: 
-#                 on_states.append(lbl)
-#             else: 
-#                 off_states.append(lbl)
-
-#         res = engine.main(samples=1000, steps=60, debug=False, 
-#                             on_states=on_states, off_states=off_states)
-
-#         res = attach_phenotype({'input_condition':sim_input, 'simul_result': res})
-#         results.append(res)
-
-#     json.dump(results, open(file_test1, 'w'), indent=4)
-
-
-# @pytest.mark.skip(reason='')
-# def test_2():
-#     import engine 
-
-#     results = []    
-#     input_string = '11100'
-#     for i,s in enumerate(['State_Mutagen', 'State_GFs','State_Nutrients',
-#                             'State_TNFalpha','State_Hypoxia']):    
-#         template[s] = True if input_string[i] == '1' else False
-
-#     inputs = [ template ]
-
-#     for sim_input in inputs:
-#         on_states = [] 
-#         off_states = [] 
-#         for lbl in sim_input:
-#             if sim_input[lbl] == True: 
-#                 on_states.append(lbl)
-#             else: 
-#                 off_states.append(lbl)
-#         # res = attr_cy.run(samples=1000, steps=60, debug=False, 
-#         #                     on_states=on_states, off_states=off_states)
-#         res = engine.main(steps=60, samples=1000, debug=False, 
-#                 on_states=on_states, off_states=off_states)
-
-#         res = attach_phenotype({'input_condition':sim_input, 'simul_result': res})
-#         results.append(res)
-
-#     json.dump(results, open(file_test2, 'w'), indent=4)
-
-
-# @pytest.mark.skip(reason='')
-def test_all(force, progress):
-    if exists(file_b1) and force == False:
+def test_32ic(force, progress):
+    
+    if exists(chk_with_32cond) and force == False:
         return;
 
     import engine 
@@ -91,7 +31,7 @@ def test_all(force, progress):
 
     results = []
     steps = 60
-    samples = 1000
+    samples = 100
     repeats = 100
     for sim_input in tqdm(inputs, ascii=True):
         on_states = [] 
@@ -106,13 +46,18 @@ def test_all(force, progress):
                                 repeats=repeats, on_states=on_states,
                                 off_states=off_states)
         res = attach_phenotype({'input_condition': sim_input, 'simul_result': res})        
+        
         results.append(res)
     
-    json.dump(results, open(file_b1, 'w'), indent=4)
+    json.dump(results, open(chk_with_32cond, 'w'), indent=4)
 
-# @pytest.mark.skip(reason='')
-def test_summary_32results():
-    with open(file_b1,'r') as fin:
+
+def test_32ic_summary(force, progress):
+    
+    if exists(output_b1_summary) and force == False:
+        return;
+
+    with open(chk_with_32cond,'r') as fin:
         res32 = json.load(fin)
 
     df0 = pd.DataFrame([], columns=['input','phenotype','ratio'])
@@ -139,23 +84,19 @@ def test_summary_32results():
                 }
             k += 1
                 
-    df0.groupby(['input','phenotype']).sum().to_csv(file_b2)
+    df0.groupby(['input','phenotype']).sum().to_csv(output_b1_summary)
 
-# input 
-file_a2 = join(dirname(tab_s1.__file__), 'a', 
-    'a2-fumia-model-processed-weighted-sum.txt')
 
-# output 
-file_test1 = join(dirname(tab_s1.__file__), 'b', 
-    'test1-simul-result-with-00000.json')
-file_test2 = join(dirname(tab_s1.__file__), 'b', 
-    'test2-simul-result-with-11100.json')
-file_b1 = join(dirname(tab_s1.__file__), 'b', 
-    'b1-simul-result-with-32-conditions.json')
-file_b2 = join(dirname(tab_s1.__file__), 'b',
-    'b2-simul-result-table-summary.csv')
+fumia_model = join(dirname(table_s1.__file__),
+    'output-a1-fumia-model-processed-weighted-sum.txt')
 
-with open(file_a2, 'r') as fobj:
+chk_with_32cond = join(dirname(table_s1.__file__), 
+    'chk-with-32ic.json')
+
+output_b1_summary = join(dirname(table_s1.__file__), 
+    'output-b1-32ic-summary.csv')
+
+with open(fumia_model, 'r') as fobj:
     lines = fobj.readlines()
     lines2 = [] 
     for lin in lines: 

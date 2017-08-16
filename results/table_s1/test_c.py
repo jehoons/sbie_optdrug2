@@ -8,13 +8,14 @@ from os.path import exists,dirname
 import pandas as pd
 from tqdm import tqdm 
 
-from sbie_optdrug.result_season2 import tab_s1
-from sbie_optdrug.result_season2.tab_s1 import fumia_phenotype
+from sbie_optdrug2.results import table_s1
+from sbie_optdrug2.results.table_s1 import fumia_phenotype
 from fumia_phenotype import *
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 
 def get_input_combinations():    
 
@@ -115,7 +116,7 @@ def test_c1(force):
     input_combinations = get_input_combinations()
 
     steps = 60
-    samples = 10000
+    samples = 100
     repeats = 100
     ncpus = 25
 
@@ -166,13 +167,9 @@ def test_c1(force):
     json.dump(results, open(file_c1, 'w'), indent=4)
 
 
-# @pytest.mark.skip(reason='')
 def test_c2_summary():
     with open(file_c1,'r') as fin:
         previous_results = json.load(fin)
-
-    simul_mode = 'nohypoxia'
-    #simul_mode = 'normal'
 
     df0 = pd.DataFrame([], columns=['input','mutation','A','P','Q','U'])
 
@@ -211,39 +208,11 @@ def test_c2_summary():
     df3 = df2.reset_index(level=df2.index.names)
     
     df4 = df3.groupby('mutation').sum()
-    # (Pdb++) df4
-    #                  A          P          Q        U
-    # mutation
-    # 00000     13.85450   0.501875   1.643625  0.00000
-    # 10000     27.70900   2.003750   2.287250  0.00000
-    # 11000     27.57100   3.008000   1.421000  0.00000
-    # 11100     25.32875   5.018500   1.636500  0.01625
-    # 11110     19.19550   6.455000   6.349500  0.00000
-    # 11111     11.53900  10.000000  10.461000  0.00000
 
     df5 = df4.sum(axis=1)
-    # (Pdb++) df5
-    # mutation
-    # 00000    16.0
-    # 10000    32.0
-    # 11000    32.0
-    # 11100    32.0
-    # 11110    32.0
-    # 11111    32.0
-    # dtype: float64
 
     for idx in df5.index.values: 
         df4.loc[idx] = df4.loc[idx]/df5.loc[idx]
-
-    # ipdb> df4
-    #                  A         P         Q         U
-    # mutation
-    # 00000     0.865906  0.031367  0.102727  0.000000
-    # 10000     0.865906  0.062617  0.071477  0.000000
-    # 11000     0.861594  0.094000  0.044406  0.000000
-    # 11100     0.791523  0.156828  0.051141  0.000508
-    # 11110     0.599859  0.201719  0.198422  0.000000
-    # 11111     0.360594  0.312500  0.326906  0.000000
 
     plt.figure(); 
     df4.plot(marker='o');     
@@ -265,25 +234,26 @@ def test_c2_summary():
     plt.savefig(file_c2_plot_b + '-' + simul_mode)
 
 
+# dataset 
+dataset_ratio_a = join(dirname(table_s1.__file__), 'dataset-ratio-a.csv')
+dataset_ratio_p = join(dirname(table_s1.__file__), 'dataset-ratio-p.csv')
+dataset_ratio_q = join(dirname(table_s1.__file__), 'dataset-ratio-q.csv')
 
-
-# input 
-file_a2 = join(dirname(tab_s1.__file__), 'a', 
-                'a2-fumia-model-processed-weighted-sum.txt')
+file_a2 = join(dirname(table_s1.__file__),
+    'output-a1-fumia-model-processed-weighted-sum.txt')
 
 # output 
-file_c1 = join(dirname(tab_s1.__file__), 'c', 
-                'c1-simul-results.json')
+file_c1 = join(dirname(table_s1.__file__), 'c', 
+                'output-c1-results.json')
 
-file_c2 = join(dirname(tab_s1.__file__), 'c', 
-                'c2-simul-results-summary.csv')
+file_c2 = join(dirname(table_s1.__file__), 'c', 
+                'output-c2-results-summary.csv')
 
-file_c2_plot_a = join(dirname(tab_s1.__file__), 'c', 
-                    'c2-simul-results-summary')
+file_c2_plot_a = join(dirname(table_s1.__file__), 'c', 
+                    'figure-c2-simul-results-summary')
 
-file_c2_plot_b = join(dirname(tab_s1.__file__), 'c',
-                    'c2-simul-results-parity')
-
+file_c2_plot_b = join(dirname(table_s1.__file__), 'c',
+                    'figure-c2-simul-results-parity')
 
 with open(file_a2, 'r') as fobj:
     lines = fobj.readlines()
@@ -320,4 +290,6 @@ mutlabels = [
     'State_p53' 
     ]
 
+simul_mode = 'nohypoxia' 
+# #simul_mode = 'normal'
 

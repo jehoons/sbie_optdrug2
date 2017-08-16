@@ -1,5 +1,5 @@
 all: 
-	pytest -qs --pdb 
+	pytest -qs --pdb test_main.py
 
 clean: 
 	rm -f output-*
