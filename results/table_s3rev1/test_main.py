@@ -191,11 +191,13 @@ if not exists('fumia_engine.pyx'):
 
 import pyximport; pyximport.install()
 
-dataset_ccle_crc_info = 'dataset-ccle_crc_info.csv'
 dataset_query_drugs = '../table_s2/dataset-query-drugs.csv'
 dataset_ccle_dose_resp = '../table_s2/download/CCLE_NP24.2009_Drug_data_2015.02.24.csv'
 
+dataset_ccle_crc_info = '../table_s3/dataset-ccle_crc_info.csv'
+
 chk_drug_model_target_dict = '../table_s3/chk-drug-modeltarget.json'
+
 chk_simul_results = 'chk-simul-results.pkl'
 chk_simul_inputs = 'chk-simul-inputs.pkl'
 chk_simul_results_postproc = 'chk-simul-results-postproc.csv'
