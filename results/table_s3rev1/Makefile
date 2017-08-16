@@ -1,7 +1,6 @@
 all: 
-	pytest -qs --pdb test_main.py
+	pytest -qs --pdb 
 
 clean: 
-	rm -f output-*
-	rm -f chk-*
-	rm -f figure-*
+	rm -f output-* chk-* figure-* *.pyx
+	rm -rf .cache __pycache__
