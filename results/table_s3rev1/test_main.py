@@ -255,8 +255,8 @@ def test_postproc_3():
     # import 
 
 def test_postproc_4():    
-    # if exists(output_corr_mut): 
-    #     return 
+    if exists(output_corr_mut): 
+        return 
     d0 = pd.read_csv(chk_simul_results_postproc_normalize)
     _cols = ['ActArea','A','P','Q','dA','dP','dQ']
     in_types = d0['input_bits'].unique().tolist(); corr_list = []    
@@ -284,6 +284,26 @@ def test_postproc_4():
     df1 = pd.DataFrame(corr_list)
     df1.to_csv(output_corr_inp,index=False)
     # import     
+
+
+def test_check_b110100():
+    d0 = pd.read_csv(chk_simul_results_postproc_normalize)   
+    _cols = ['ActArea','A','P','Q','dA','dP','dQ']   
+    in_types = d0['input_bits'].unique().tolist(); corr_list = []    
+    dsub = d0.loc[ d0['input_bits'] == 'b110100' ]
+    meandata = dsub.groupby('compound').mean()
+    meandata.to_csv(check_b110100_mean)
+    dsub.to_csv(check_b110100)
+
+
+def test_check_b110000():
+    d0 = pd.read_csv(chk_simul_results_postproc_normalize)   
+    _cols = ['ActArea','A','P','Q','dA','dP','dQ']   
+    in_types = d0['input_bits'].unique().tolist(); corr_list = []    
+    dsub = d0.loc[ d0['input_bits'] == 'b110000' ]
+    meandata = dsub.groupby('compound').mean()
+    meandata.to_csv(check_b110000_mean)
+    dsub.to_csv(check_b110000)
 
 
 if not exists('fumia_engine.pyx'):
@@ -322,6 +342,12 @@ chk_simul_results_postproc = join(basedir,
 chk_simul_results_postproc_normalize = join(basedir, 
     'chk-simul-results-postproc-normal.csv')
 
+check_b110100_mean = join(basedir, 'chk-b110100-mean.csv')
+check_b110100 = join(basedir, 'chk-b110100.csv')
+
+check_b110000_mean = join(basedir, 'chk-b110000-mean.csv')
+check_b110000 = join(basedir, 'chk-b110000.csv')
+
 # final results
 output_corr_mut = join(basedir,
     'output-a-corr-mut.csv')
@@ -333,4 +359,4 @@ max_num_drugs = 2;
 
 samples = 10
 
-
+# test. 
