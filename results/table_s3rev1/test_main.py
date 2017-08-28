@@ -359,4 +359,5 @@ max_num_drugs = 2;
 
 samples = 10
 
+# 한글? 
 # test. 
