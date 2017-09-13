@@ -19,6 +19,24 @@ import numpy as np
 from sklearn import datasets, linear_model    
 from sklearn.metrics import mean_squared_error, r2_score
 
+basedir = dirname(table_s3rev2.__file__)
+
+# Dataset 
+dataset_query_drugs = join(basedir,
+    '../table_s2/dataset-query-drugs.csv')
+
+dataset_ccle_dose_resp = join(basedir,
+    '../table_s2/download/CCLE_NP24.2009_Drug_data_2015.02.24.csv')
+
+# CRC subset of CCLE 
+dataset_ccle_crc_info = join(basedir,
+    '../table_s3/dataset-ccle_crc_info.csv')
+
+chk_drug_model_target_dict = join(basedir, 
+    '../table_s3/chk-drug-modeltarget.json')
+
+msigdb = dataset_msigdb.load_msigdb()
+
 if not exists('fumia_engine.pyx'):
     attr_cy.build(model_fumia2013.modeltext(), 
         pyx='fumia_engine.pyx',
@@ -27,27 +45,10 @@ if not exists('fumia_engine.pyx'):
 
 import pyximport; pyximport.install()
 
-basedir = dirname(table_s3rev2.__file__)
-
-# dataset 
-dataset_query_drugs = join(basedir,
-    '../table_s2/dataset-query-drugs.csv')
-
-dataset_ccle_dose_resp = join(basedir,
-    '../table_s2/download/CCLE_NP24.2009_Drug_data_2015.02.24.csv')
-
-dataset_ccle_crc_info = join(basedir,
-    '../table_s3/dataset-ccle_crc_info.csv')
-
-# intermediate results
-chk_drug_model_target_dict = join(basedir, 
-    '../table_s3/chk-drug-modeltarget.json')
-
 max_num_drugs = 2;
 
 samples = 10
 
-msigdb = dataset_msigdb.load_msigdb()
 
 with open('dataset-goterms-in-apq.json', 'r') as f: 
     goterms_in_apq = json.load(f)
@@ -102,10 +103,11 @@ def to_bits_mut(input_data):
     return 'b'+"".join(res)    
 
 
-def run(input_cond=None, mut_config=None, targetting=[], 
+def run(input_cond=None, mut_config=None, targetting=[],
     steps=50, samples=100, repeats=100, ncpus=64):
 
     import fumia_engine
+    
     on_states = []
     off_states = [] + targetting
     for lbl in input_cond: 
@@ -141,13 +143,16 @@ def run(input_cond=None, mut_config=None, targetting=[],
 
     return res
 
+
 def mygsea(on_statestates_genesyms):
+    
     ''' 켜져 있는 상태의 유전자는 어느 GO에 속하는가? '''
     
     if exists('chk-fumia-msigdb.csv'): 
         return 
     
     import dataset_msigdb
+    
     msigdb = dataset_msigdb.load_msigdb()
     fumia_msigdb = {} 
     fumia_msigdb_list = [] 
@@ -175,6 +180,7 @@ def mygsea(on_statestates_genesyms):
 def mygsea_rev2(on_states_genesyms):
 
     ''' 켜져 있는 상태의 유전자는 어느 클래스의 GO에 속하는가? '''
+    
     apq_sel = goterms_in_apq['selected']
 
     data_list = []     
@@ -195,8 +201,9 @@ def mygsea_rev2(on_states_genesyms):
 
 
 def get_on_states_genes(labels, statekey):
-    # 여기서 msigdb는 uniport_id로 되어있다. 그러므로 gene symbol으로 바꾸어줄 필요가 있다.
-    # 1. uniprot to gene symbol.
+    
+    ''' 여기서 msigdb는 uniport_id로 되어있다. 그러므로 gene symbol으로 바꾸어줄 필요가 있다.
+    1. uniprot to gene symbol '''
 
     id_list = [] 
     
@@ -259,7 +266,7 @@ def get_on_states_genes(labels, statekey):
 # output: 
 chk_simul_results = join(basedir, 'chk-simul-results.pkl')
 chk_simul_inputs = join(basedir, 'chk-simul-inputs.pkl')
-def test_run_simul(force):
+def test_run_simul(force): 
 
     if exists(chk_simul_inputs) and force == False:
         return                
@@ -423,16 +430,17 @@ def test_postproc_make_df(force):
                             flat_data3[g] = state_value
 
                 simul_results_stategenesymb_list.append(flat_data3)
+        
         idx += 1 
 
     json_normalize(simul_results_list).to_csv(
-        'chk-simul-res-rec.csv', index=False)
+        chk_simul_res_rec, index=False)
     
     pd.DataFrame(simul_results_state_list).to_csv(
-        'chk-simul-res-state-rec.csv', index=False)
+        chk_simul_res_state_rec, index=False)
     
     pd.DataFrame(simul_results_stategenesymb_list).to_csv(
-        'chk-simul-res-stategenesymb-rec.csv', index=False)
+        chk_simul_res_stategenesymb_rec, index=False)
 
 
 # test: test_postproc_combine_simul_and_gsea
@@ -480,8 +488,8 @@ fig_predicted_score_hist = 'fig-predicted-score-hist.png'
 fig_predicted_score_sorted = 'fig-predicted-score-sorted.png'
 def test_plot(force):
 
-    # if exists(output_simul_result_mean_score) and not force: 
-    #     return 
+    if exists(output_simul_result_mean_score) and not force: 
+        return 
 
     df0 = pd.read_csv(output_combined_with_gsea)
     df1 = df0[['ratio_interection','class']].copy()
