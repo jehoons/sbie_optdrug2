@@ -14,6 +14,11 @@ import dataset_msigdb
 from pandas.io.json import json_normalize
 import seaborn as sns, numpy as np
 
+import time
+import numpy as np
+from sklearn import datasets, linear_model    
+from sklearn.metrics import mean_squared_error, r2_score
+
 if not exists('fumia_engine.pyx'):
     attr_cy.build(model_fumia2013.modeltext(), 
         pyx='fumia_engine.pyx',
@@ -38,40 +43,6 @@ dataset_ccle_crc_info = join(basedir,
 chk_drug_model_target_dict = join(basedir, 
     '../table_s3/chk-drug-modeltarget.json')
 
-chk_simul_results = join(basedir,
-    'chk-simul-results.pkl')
-
-chk_simul_inputs = join(basedir,
-    'chk-simul-inputs.pkl')
-
-chk_simul_results_postproc = join(basedir,
-    'chk-simul-results-postproc.csv')
-
-chk_simul_results_postproc_gsea = join(basedir,
-    'chk-simul-results-postproc-gsea.csv')
-
-chk_simul_results_postproc_normalize = join(basedir, 
-    'chk-simul-results-postproc-normal.csv')
-
-check_b110100_mean = join(basedir, 
-    'chk-b110100-mean.csv')
-
-check_b110100 = join(basedir, 
-    'chk-b110100.csv')
-
-check_b110000_mean = join(basedir, 
-    'chk-b110000-mean.csv')
-
-check_b110000 = join(basedir, 
-    'chk-b110000.csv')
-
-# final results
-output_corr_mut = join(basedir,
-    'output-a-corr-mut.csv')
-
-output_corr_inp = join(basedir,
-    'output-b-corr-inp.csv')
-
 max_num_drugs = 2;
 
 samples = 10
@@ -80,9 +51,6 @@ msigdb = dataset_msigdb.load_msigdb()
 
 with open('dataset-goterms-in-apq.json', 'r') as f: 
     goterms_in_apq = json.load(f)
-
-output_combined_with_gsea = join(basedir, 
-    'output-combined-with-gsea.csv')
 
 
 def genesymdict():
@@ -287,12 +255,14 @@ def get_on_states_genes(labels, statekey):
     return on_states_genesyms  
 
 
-
+# test: test_run_simul
+# output: 
+chk_simul_results = join(basedir, 'chk-simul-results.pkl')
+chk_simul_inputs = join(basedir, 'chk-simul-inputs.pkl')
 def test_run_simul(force):
 
-    if exists(chk_simul_results) and force == False:
-        return 
-
+    if exists(chk_simul_inputs) and force == False:
+        return                
     with open(chk_drug_model_target_dict, 'r') as f: 
         target_table = json.load(f)
 
@@ -338,6 +308,8 @@ def test_run_simul(force):
         pickle.dump(simul_inputs, f)        
 
 
+chk_simul_results_postproc_gsea = join(basedir,
+    'chk-simul-results-postproc-gsea.csv')
 def test_postproc_1(force):
 
     if exists(chk_simul_results_postproc_gsea) and not force:
@@ -382,12 +354,18 @@ def test_postproc_1(force):
     pd.DataFrame(res2).to_csv(chk_simul_results_postproc_gsea)
 
 
-# @pytest.mark.skip()
+# test: test_postproc_make_df
+# outputs: 
+chk_simul_res_rec = join(basedir,
+        'chk-simul-res-rec.csv')
+chk_simul_res_state_rec = join(basedir,
+        'chk-simul-res-state-rec.csv')
+chk_simul_res_stategenesymb_rec = join(basedir, 
+        'chk-simul-res-stategenesymb-rec.csv')
 def test_postproc_make_df(force):
-
     ''' 여기서는 시뮬레이션 입력데이터와 결과데이터를 통합하여 CSV 형식의 
     자료를 만든다. '''
-    if exists(chk_simul_results_postproc) and not force:
+    if exists('chk-simul-res-stategenesymb-rec.csv') and not force:
         return
 
     with open(chk_simul_inputs, 'rb') as f: 
@@ -457,6 +435,10 @@ def test_postproc_make_df(force):
         'chk-simul-res-stategenesymb-rec.csv', index=False)
 
 
+# test: test_postproc_combine_simul_and_gsea
+# outputs: 
+output_combined_with_gsea = join(basedir, 
+    'output-combined-with-gsea.csv')
 def test_postproc_combine_simul_and_gsea(force):
 
     if exists(output_combined_with_gsea) and not force: 
@@ -490,7 +472,16 @@ def test_postproc_combine_simul_and_gsea(force):
     df3.to_csv(output_combined_with_gsea, index=False)
 
 
+# test: test_plot 
+# outputs: 
+output_simul_result_mean_score = join(basedir,
+        'output-simul-result-mean-score.csv')
+fig_predicted_score_hist = 'fig-predicted-score-hist.png'
+fig_predicted_score_sorted = 'fig-predicted-score-sorted.png'
 def test_plot(force):
+
+    # if exists(output_simul_result_mean_score) and not force: 
+    #     return 
 
     df0 = pd.read_csv(output_combined_with_gsea)
     df1 = df0[['ratio_interection','class']].copy()
@@ -504,17 +495,17 @@ def test_plot(force):
         ids = grps[key]
         v_mean0 = v_mean.loc[key].tolist()[0]
         v_std0 = v_std.loc[key].tolist()[0]
-        df1.loc[ids, 'ratio_interection'] = (df1.loc[ids, 'ratio_interection'] - v_mean0) / v_std0
+        df1.loc[ids, 'ratio_interection'] = (
+            df1.loc[ids, 'ratio_interection']-v_mean0)/v_std0
 
     plt.figure()
+    
     g = sns.FacetGrid(df1,  col="class", margin_titles=True)
-    bins = np.arange(
-            df1['ratio_interection'].min(),
-            df1['ratio_interection'].max(),
-            0.05
-            )
+    bins = np.arange(df1['ratio_interection'].min(),
+            df1['ratio_interection'].max(),0.05)    
     g.map(plt.hist, 'ratio_interection')
-    plt.savefig('temp.png')
+    
+    plt.savefig(fig_predicted_score_hist)
 
     df2 = df0[['compound', 'ratio_interection','class']].copy()
 
@@ -540,20 +531,136 @@ def test_plot(force):
 
     df_final = pd.concat([df_mean1, df_mean2, df_mean3], ignore_index=True)
 
+    df_final_sorted = df_final.sort_values(by='ratio_interection')
+    vv = df_final_sorted['ratio_interection']
+    std_v = df_final_sorted['ratio_interection'].std()
+    mean_v = df_final_sorted['ratio_interection'].mean()
+    df_final_sorted['ratio_interection'] = (vv - mean_v) / std_v
+        
+    grps = df_final_sorted.groupby('class').groups
+    for key in grps: 
+        ids = grps[key]
+        mu0 = df_final_sorted.loc[ids, 'ratio_interection'].mean()
+        std0 = df_final_sorted.loc[ids, 'ratio_interection'].std()
+        df_final_sorted.loc[ids, 'ratio_interection'] = (
+            df_final_sorted.loc[ids, 'ratio_interection']-mu0)/std0
+
     plt.figure()
-    g = sns.FacetGrid(df_final,  col="class", margin_titles=True)
+
+    g = sns.FacetGrid(df_final_sorted,  col="class",    
+        margin_titles=True, col_order=['PROLIFERATION', 'ARREST', 'APOPTOSIS'])
+    
     g.map(sns.barplot, 'compound', 'ratio_interection')
-    plt.savefig('temp2.png')
 
-    # plt.figure() 
-    # g = sns.factorplot(
-    #     x="compound",
-    #     y="ratio_interection",
-    #     col="class",
-    #     data=df_final,
-    #     kind="bar",
-    #     size=4,
-    #     aspect=.7
-    #     );
-    # plt.savefig('temp3.png')
+    plt.savefig(fig_predicted_score_sorted)
 
+    df_final_sorted.to_csv(output_simul_result_mean_score)
+
+
+# test: test_expr_vs_predict
+# outputs: 
+chk_merged_reduced_mean = 'chk-merged-reduced-mean.csv'
+fig_pairplot = 'fig-pairplot.png'
+fig_pairplot_mean = 'fig-pairplot-mean.png'
+def test_expr_vs_predict(force):
+
+    if exists(chk_merged_reduced_mean) and not force: 
+        return 
+
+    dfcell = pd.read_csv(
+            '../table_s3/dataset-ccle_crc_info.csv')
+    dfdrugs = pd.read_csv(
+            '../table_s2/dataset-query-drugs.csv')
+    dftreat = pd.read_csv(
+            '../table_s2/download/CCLE_NP24.2009_Drug_data_2015.02.24.csv')
+
+    dfdrugs = dfdrugs[['compound_name','compound_chembl_id']
+        ].drop_duplicates()
+
+    dfexpr = dftreat.merge(
+            dfcell,
+            how='left',
+            left_on='Primary Cell Line Name',
+            right_on='Cell line primary name'
+            )
+
+    dfexpr = dfexpr.dropna(axis=0, subset=['Histology'])
+
+    dfexpr = dfexpr.merge(
+            dfdrugs, 
+            how='left', 
+            left_on='Compound', 
+            right_on='compound_name'
+            )
+    
+    dfsimulres = pd.read_csv(
+            'output-simul-result-mean-score.csv'
+            )[['compound','ratio_interection','class']]
+
+    dfsimulres_grps = dfsimulres.groupby('class').groups    
+    dfsimulres_class_list = [] 
+    for k in dfsimulres_grps:         
+        _df = dfsimulres.loc[dfsimulres_grps[k],
+            ['compound','ratio_interection']]
+        _df = _df[ _df['compound'] != 'control' ]
+        _df.rename(columns={'ratio_interection': k}, inplace=True)
+        _df.set_index('compound', inplace=True)
+        dfsimulres_class_list.append(_df)
+
+    dfsimulres_transp = pd.concat(dfsimulres_class_list, axis=1)
+
+    df_merged = dfexpr.merge(dfsimulres_transp, how='left', 
+            left_on='compound_chembl_id', right_index=True)
+    
+    df_merged_reduced = df_merged[['Primary Cell Line Name','APOPTOSIS', 
+        'ARREST','PROLIFERATION','ActArea']]
+    df_merged_reduced = df_merged_reduced.dropna()
+    
+    plt.figure() 
+
+    g = sns.pairplot(df_merged_reduced, hue='Primary Cell Line Name', kind='reg')
+
+    plt.savefig(fig_pairplot)
+
+    df_merged_reduced = df_merged[['compound_chembl_id','APOPTOSIS', 
+        'ARREST','PROLIFERATION','ActArea']]
+    df_merged_reduced_mean = df_merged_reduced.groupby('compound_chembl_id').mean()
+    df_merged_reduced_mean = df_merged_reduced_mean.dropna()
+
+    plt.figure() 
+    
+    g = sns.pairplot(df_merged_reduced_mean, kind='reg')
+    
+    plt.savefig(fig_pairplot_mean)
+    df_merged_reduced_mean.to_csv(chk_merged_reduced_mean)
+
+
+# test: test_regression
+# outputs: 
+fig_reg_parity = 'fig-reg-parity.png'
+def test_regression(force):
+
+    if exists(fig_reg_parity) and not force:
+        return 
+
+    fumiacrc = pd.read_csv(chk_merged_reduced_mean) 
+    X = fumiacrc[['APOPTOSIS','ARREST','PROLIFERATION']].values
+    # X = fumiacrc[['ARREST']].values
+    y = fumiacrc['ActArea'].values
+
+    regr = linear_model.LinearRegression()
+    regr.fit(X, y)
+    y_pred = regr.predict(X)
+
+    # The coefficients
+    print('Coefficients: \n', regr.coef_)
+    # The mean squared error
+    print("Mean squared error: %.2f"
+          % mean_squared_error(y, y_pred))
+    # Explained variance score: 1 is perfect prediction
+    print('Variance score: %.2f' % r2_score(y, y_pred))
+
+    plt.figure()
+    plt.scatter(y, y_pred, color='black') 
+    plt.xlabel('ActArea(Experiment)'); plt.ylabel('ActArea(Prediction)')
+    plt.savefig(fig_reg_parity) 
