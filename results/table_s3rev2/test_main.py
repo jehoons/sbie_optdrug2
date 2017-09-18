@@ -640,6 +640,7 @@ def test_expr_vs_predict(force):
     g = sns.pairplot(df_merged_reduced_mean, kind='reg')
     
     plt.savefig(fig_pairplot_mean)
+    
     df_merged_reduced_mean.to_csv(chk_merged_reduced_mean)
 
 
@@ -648,8 +649,8 @@ def test_expr_vs_predict(force):
 fig_reg_parity = 'fig-reg-parity.png'
 def test_regression(force):
 
-    if exists(fig_reg_parity) and not force:
-        return 
+    # if exists(fig_reg_parity) and not force:
+    #     return 
 
     fumiacrc = pd.read_csv(chk_merged_reduced_mean) 
     X = fumiacrc[['APOPTOSIS','ARREST','PROLIFERATION']].values
@@ -663,12 +664,17 @@ def test_regression(force):
     # The coefficients
     print('Coefficients: \n', regr.coef_)
     # The mean squared error
-    print("Mean squared error: %.2f"
-          % mean_squared_error(y, y_pred))
+    print("Mean squared error: %.2f" % mean_squared_error(y, y_pred))
     # Explained variance score: 1 is perfect prediction
     print('Variance score: %.2f' % r2_score(y, y_pred))
 
-    plt.figure()
+    plt.figure(figsize=(5,5))
+
     plt.scatter(y, y_pred, color='black') 
-    plt.xlabel('ActArea(Experiment)'); plt.ylabel('ActArea(Prediction)')
+    y_max = max(y.tolist()+y_pred.tolist())
+    y_min = min(y.tolist()+y_pred.tolist())    
+    plt.plot([y_min, y_max],[y_min, y_max])
+    plt.xlabel('ActArea(Experiment)'); 
+    plt.ylabel('ActArea(Prediction)')
+    
     plt.savefig(fig_reg_parity) 
