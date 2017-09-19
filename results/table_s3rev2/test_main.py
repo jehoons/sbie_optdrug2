@@ -649,8 +649,8 @@ def test_expr_vs_predict(force):
 fig_reg_parity = 'fig-reg-parity.png'
 def test_regression(force):
 
-    # if exists(fig_reg_parity) and not force:
-    #     return 
+    if exists(fig_reg_parity) and not force:
+        return 
 
     fumiacrc = pd.read_csv(chk_merged_reduced_mean) 
     X = fumiacrc[['APOPTOSIS','ARREST','PROLIFERATION']].values
